@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DCHA ADMIN DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="Admin menu">
+            <h2>DCH Admin</h2>
+            <nav class="menu" id="sidebarMenu">
+                <div class="item active" data-view="dashboard">🏠 Dashboard</div>
+                <div class="item" data-view="manage-tutors">👨‍🏫 Manage Tutors</div>
+                <div class="item" data-view="students">🎓 Students</div>
+                <div class="item" data-view="admissions">✉️ Admissions</div>
+                <div class="item" data-view="reports">📑 Reports</div>
+                <div class="item" data-view="settings">⚙️ Settings</div>
+            </nav>
+            <div class="footer-note">&copy; DCH Academy • Admin</div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main" role="main">
+            <div class="topbar">
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="hamburger" title="Toggle menu">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.6">
+                            <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 style="font-size:16px;margin:0;color:#2b3949">Admin Dashboard</h3>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="status-pill"><span class="status-dot" aria-hidden></span>
+                        <div style="font-size:13px;font-weight:600;color:#2b3949">ONLINE</div>
+                    </div>
+                    <div class="user-info" style="font-weight:600"></div>
+                    <button class="logout-btn btn small secondary">Logout</button>
+                </div>
+            </div>
+
+            <section class="hero" aria-labelledby="heroTitle">
+                <h1 id="heroTitle">Welcome back, <span class="user-name">Admin</span>!</h1>
+                <p>Manage tutors, students, admissions and more — all from here.</p>
+            </section>
+
+            <!-- Dashboard view -->
+            <section class="card" id="view-dashboard">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Total Tutors</h3>
+                        <div class="stat-big" id="stat-tutors">0</div>
+                        <div class="muted">Active tutors on the platform</div>
+                    </div>
+                    <div class="card">
+                        <h3>Total Students</h3>
+                        <div class="stat-big" id="stat-students">0</div>
+                        <div class="muted">All registered students</div>
+                    </div>
+                    <div class="card">
+                        <h3>Departments</h3>
+                        <div class="stat-big" id="stat-departments">0</div>
+                        <div class="muted">Active departments</div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="left-col">
+                        <!-- Department Performance Charts -->
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Department Performance</h3>
+                                <div class="muted small">Live from backend</div>
+                            </div>
+                            <div id="chartsContainer" style="margin-top:12px">
+                                <!-- Charts will be dynamically inserted here -->
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Recent Tutors</h3>
+                                <div class="muted small" id="recent-tutor-count">0</div>
+                            </div>
+                            <div class="list" id="recent-tutors-list" style="margin-top:12px"></div>
+                        </div>
+
+                        <div class="card" id="students-preview">
+                            <div class="row-between">
+                                <h3>Students by Department</h3>
+                                <div class="helpers">
+                                    <select id="deptFilter" class="select">
+                                        <option value="all">All Departments</option>
+                                    </select>
+                                    <div class="tag" id="deptCount">0</div>
+                                </div>
+                            </div>
+                            <div style="margin-top:12px">
+                                <table id="students-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Department</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-col">
+                        <div class="card">
+                            <h3>Add Tutor</h3>
+                            <div style="margin-top:8px">
+                                <div class="form-row">
+                                    <div class="field">
+                                        <label class="muted">Full name</label>
+                                        <input id="tutorName" class="input" placeholder="e.g. Jane Doe">
+                                    </div>
+                                </div>
+
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Email</label>
+                                        <input id="tutorEmail" class="input" placeholder="e.g. jane@dch.ac" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Department</label>
+                                        <input id="tutorDept" class="input" placeholder="e.g. Computer Science" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Password</label>
+                                        <input type="password" id="tutorPassword" class="input"
+                                            placeholder="Set password" />
+                                    </div>
+                                </div>
+
+                                <div style="margin-top:12px;display:flex;gap:8px">
+                                    <button id="btnAddTutor" class="btn">Add Tutor</button>
+                                    <button id="btnClearTutors" class="btn small secondary"
+                                        title="Clear all tutors">Clear All</button>
+                                </div>
+                                <div id="tutorMsg" style="margin-top:10px;color:#2b3949;font-weight:600"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Admissions Quick Send</h3>
+                            <div class="muted">Select a student to generate & send an admission letter.</div>
+                            <div style="margin-top:10px">
+                                <select id="studentSelect" class="select"></select>
+                                <div style="margin-top:10px;display:flex;gap:8px">
+                                    <button id="btnSendAdmission" class="btn">Send Admission Letter</button>
+                                    <button id="btnBulkAdmission" class="btn small secondary">Bulk Send</button>
+                                </div>
+                                <div id="admissionMsg" style="margin-top:10px;color:#2b3949;font-weight:600"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Quick Reports</h3>
+                            <div style="margin-top:6px" class="muted">Download department reports</div>
+                            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                                <button id="btnExportTutors" class="btn small">Export Tutors (Excel)</button>
+                                <button id="btnExportStudents" class="btn small secondary">Export Students</button>
+                                <button id="btnExportPerformance" class="btn small">Performance Report</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Recent Activity</h3>
+                            <div class="muted small">System notifications</div>
+                            <div class="activity-log" id="activityLog"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manage Tutors view -->
+            <section class="card" id="view-manage-tutors" style="display:none">
+                <div class="row-between">
+                    <h3>Manage Tutors</h3>
+                    <div class="muted">Add, edit or remove tutors.</div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+                    <input id="searchTutor" class="input" placeholder="Search tutors by name or email" />
+                    <button id="refreshTutors" class="btn small">Refresh</button>
+                </div>
+
+                <div style="margin-top:12px;overflow:auto">
+                    <table id="tutors-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Added</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Students view -->
+            <section class="card" id="view-students" style="display:none">
+                <div class="row-between">
+                    <h3>All Students</h3>
+                    <div class="helpers">
+                        <input id="searchStudent" class="input small" placeholder="Search name or email" />
+                        <select id="filterDeptStudents" class="select small">
+                            <option value="all">All Depts</option>
+                        </select>
+                        <button id="refreshStudents" class="btn small">Refresh</button>
+                    </div>
+                </div>
+
+                <div style="margin-top:12px;overflow:auto">
+                    <table id="all-students-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Tutor</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Admissions view -->
+            <section class="card" id="view-admissions" style="display:none">
+                <h3>Admissions</h3>
+                <div class="muted">Compose an admission letter and send to students.</div>
+
+                <div style="margin-top:12px">
+                    <label class="muted">Select student</label>
+                    <select id="admitStudentSelect" class="select"></select>
+                    <div style="margin-top:10px">
+                        <label class="muted">Letter Title</label>
+                        <input id="letterTitle" class="input" value="Admission Offer from DCH Academy" />
+                        <label class="muted" style="margin-top:10px">Message</label>
+                        <textarea id="letterBody" class="textarea" rows="6">Dear [Name],
+
+Congratulations! We are pleased to offer you admission into the [Program] program at DCH Academy.
+
+Please complete your registration within 7 days and ensure all required documents are submitted.
+
+Welcome to our academic community!
+
+Sincerely,
+DCH Admissions Team</textarea>
+                        <div style="margin-top:10px;display:flex;gap:8px">
+                            <button id="btnSendCompose" class="btn">Send Letter</button>
+                            <button id="btnPreviewLetter" class="btn small secondary">Preview</button>
+                            <button id="btnBulkCompose" class="btn small">Bulk Send</button>
+                        </div>
+                        <div id="composeMsg" style="margin-top:10px;font-weight:600;color:#2b3949"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports view -->
+            <section class="card" id="view-reports" style="display:none">
+                <h3>Analytics & Reports</h3>
+                <div class="muted">Comprehensive department analytics and performance reports.</div>
+
+                <div style="margin-top:12px">
+                    <div class="helpers">
+                        <select id="reportDept" class="select">
+                            <option value="">Select Department</option>
+                        </select>
+                        <select id="reportPeriod" class="select">
+                            <option value="7d">Last 7 days</option>
+                            <option value="30d" selected>Last 30 days</option>
+                            <option value="90d">Last 90 days</option>
+                            <option value="1y">Last Year</option>
+                        </select>
+                        <button id="btnGenerateReport" class="btn">Generate Report</button>
+                        <button id="btnExportReport" class="btn small secondary">Export Excel</button>
+                    </div>
+                </div>
+
+                <div id="reportResults" style="margin-top:20px">
+                    <!-- Report results will be displayed here -->
+                </div>
+            </section>
+
+            <!-- Settings view -->
+            <section class="card" id="view-settings" style="display:none">
+                <h3>System Settings</h3>
+                <div class="muted">Platform configuration and preferences.</div>
+
+                <div style="margin-top:20px">
+                    <div class="card" style="background:#f9f7f1;border:1px solid #e6d9b4">
+                        <h4>Email Configuration</h4>
+                        <div class="muted">Configure email service for notifications</div>
+                        <div style="margin-top:10px">
+                            <button class="btn small">Configure SMTP</button>
+                            <button class="btn small secondary">Test Email</button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top:12px;background:#f9f7f1;border:1px solid #e6d9b4">
+                        <h4>System Information</h4>
+                        <div class="muted">Platform status and version</div>
+                        <div style="margin-top:10px;font-size:13px">
+                            <div>Version: 1.0.0</div>
+                            <div>Last Backup: Today, 02:00 AM</div>
+                            <div>Active Users: <span id="activeUsers">0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Include JavaScript files -->
+    <script src="./js/auth.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/admin.js"></script>
+</body>
+
+</html>

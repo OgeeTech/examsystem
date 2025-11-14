@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DCHA ADMIN DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #eef3f6;
+            --card: #ffffff;
+            --muted: #98a0ad;
+            --accent: #6c63ff;
+            --gold: #d9b56a;
+            --shadow: 0 6px 18px rgba(24, 39, 75, 0.08);
+            --soft-shadow: 0 10px 30px rgba(22, 35, 65, 0.06);
+            --radius: 14px;
+            --radius-sm: 10px;
+            --danger: #e05b5b;
+            --success: #2fa46a;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+            color: #1f2a37;
+            background: var(--bg);
+            margin: 0
+        }
+
+        /* Layout */
+        .app {
+            display: flex;
+            min-height: 100vh;
+            padding: 28px;
+            gap: 24px
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #fffaf0, #fbf6f2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 18px
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #5c523c;
+            margin: 0
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px
+        }
+
+        .menu .item {
+            padding: 12px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #6b5f4a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: .2s;
+            cursor: pointer
+        }
+
+        .menu .item:hover {
+            background: #f4eddc;
+            color: #000
+        }
+
+        .menu .active {
+            background: #e6d9b4;
+            font-weight: 600;
+            color: #000
+        }
+
+        .footer-note {
+            margin-top: auto;
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 0;
+            display: flex;
+            flex-direction: column
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px
+        }
+
+        .hamburger {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            padding: 8px 12px;
+            border-radius: 999px;
+            box-shadow: var(--shadow)
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #7ce08f;
+            box-shadow: 0 0 10px rgba(124, 224, 143, 0.18)
+        }
+
+        .hero {
+            background: linear-gradient(90deg, #5f65e6, #7c59c9);
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 18px;
+            box-shadow: var(--soft-shadow)
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700
+        }
+
+        .hero p {
+            margin: 6px 0 0;
+            color: rgba(255, 255, 255, 0.95)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 18px
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow)
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #2b3949
+        }
+
+        .stat-big {
+            font-size: 26px;
+            font-weight: 700
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        /* Content layout */
+        .content {
+            display: flex;
+            gap: 18px
+        }
+
+        .left-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px
+        }
+
+        .right-col {
+            width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 14px
+        }
+
+        th {
+            background: #f9f7f1;
+            color: #6b5f4a
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa
+        }
+
+        tr:hover {
+            background: #f4eddc
+        }
+
+        /* Forms */
+        .form-row {
+            display: flex;
+            gap: 12px
+        }
+
+        .form-row .field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .input,
+        .select,
+        .textarea {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(42, 56, 72, 0.06);
+            background: #fbfdff
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none
+        }
+
+        .btn.secondary {
+            background: #2b3949
+        }
+
+        .small {
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 8px
+        }
+
+        .helpers {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .list {
+            max-height: 320px;
+            overflow: auto;
+            padding-right: 8px
+        }
+
+        /* utilities */
+        .row-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .danger {
+            background: linear-gradient(90deg, #ffecec, #ffd6d6);
+            border: 1px solid rgba(224, 91, 91, 0.12);
+            color: var(--danger)
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 8px;
+            border-radius: 999px;
+            background: #f4f4f6;
+            font-weight: 600;
+            font-size: 12px
+        }
+
+        .activity-log {
+            font-size: 13px;
+            max-height: 200px;
+            overflow: auto;
+            padding-right: 8px;
+        }
+
+        .activity-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        @media (max-width:1100px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .right-col {
+                width: 360px
+            }
+        }
+
+        @media (max-width:900px) {
+            .app {
+                flex-direction: column;
+                padding: 14px
+            }
+
+            .sidebar {
+                display: none
+            }
+
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .content {
+                flex-direction: column
+            }
+
+            .right-col {
+                width: 100%
+            }
+        }
+    </style>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="Admin menu">
+            <h2>DCH Admin</h2>
+            <nav class="menu" id="sidebarMenu">
+                <div class="item active" data-view="dashboard">🏠 Dashboard</div>
+                <div class="item" data-view="manage-tutors">👨‍🏫 Manage Tutors</div>
+                <div class="item" data-view="students">🎓 Students</div>
+                <div class="item" data-view="admissions">✉️ Admissions</div>
+                <div class="item" data-view="reports">📑 Reports</div>
+                <div class="item" data-view="settings">⚙️ Settings</div>
+            </nav>
+            <div class="footer-note">&copy; DCH Academy • Admin</div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main" role="main">
+            <div class="topbar">
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="hamburger" title="Toggle menu">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.6">
+                            <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 style="font-size:16px;margin:0;color:#2b3949">Admin Dashboard</h3>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="status-pill"><span class="status-dot" aria-hidden></span>
+                        <div style="font-size:13px;font-weight:600;color:#2b3949">ONLINE</div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="hero" aria-labelledby="heroTitle">
+                <h1 id="heroTitle">Welcome back, Admin!</h1>
+                <p>Manage tutors, students, admissions and more — all from here.</p>
+            </section>
+
+            <!-- Dashboard view -->
+            <section class="card" id="view-dashboard">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Total Tutors</h3>
+                        <div class="stat-big" id="stat-tutors">0</div>
+                        <div class="muted">Active tutors on the platform</div>
+                    </div>
+                    <div class="card">
+                        <h3>Total Students</h3>
+                        <div class="stat-big" id="stat-students">0</div>
+                        <div class="muted">All registered students</div>
+                    </div>
+                    <div class="card">
+                        <h3>Admitted</h3>
+                        <div class="stat-big" id="stat-admitted">0</div>
+                        <div class="muted">Students who have been sent admission letters</div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="left-col">
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Recent Tutors</h3>
+                                <div class="muted small" id="recent-tutor-count">0</div>
+                            </div>
+                            <div class="list" id="recent-tutors-list" style="margin-top:12px"></div>
+                        </div>
+
+                        <div class="card" id="students-preview">
+                            <div class="row-between">
+                                <h3>Students by Department</h3>
+                                <div class="helpers">
+                                    <select id="deptFilter" class="select">
+                                        <option value="all">All Departments</option>
+                                    </select>
+                                    <div class="tag" id="deptCount">0</div>
+                                </div>
+                            </div>
+                            <div style="margin-top:12px">
+                                <table id="students-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Matric</th>
+                                            <th>Dept</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Charts -->
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Department Distribution</h3>
+                                <div class="muted small">Bar chart</div>
+                            </div>
+                            <div style="margin-top:12px">
+                                <canvas id="deptChart" height="160"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Admissions Trend (last 7 entries)</h3>
+                                <div class="muted small">Line chart</div>
+                            </div>
+                            <div style="margin-top:12px">
+                                <canvas id="trendChart" height="140"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-col">
+                        <div class="card">
+                            <h3>Add Tutor</h3>
+                            <div style="margin-top:8px">
+                                <div class="form-row">
+                                    <div class="field">
+                                        <label class="muted">Full name</label>
+                                        <input id="tutorName" class="input" placeholder="e.g. Jane Doe">
+                                    </div>
+                                </div>
+
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Email</label>
+                                        <input id="tutorEmail" class="input" placeholder="e.g. jane@dch.ac" />
+                                    </div>
+                                </div>
+
+                                <div style="margin-top:12px;display:flex;gap:8px">
+                                    <button id="btnAddTutor" class="btn">Add Tutor</button>
+                                    <button id="btnClearTutors" class="btn small secondary"
+                                        title="Clear all tutors">Clear All</button>
+                                </div>
+                                <div id="tutorMsg" style="margin-top:10px;color:#2b3949;font-weight:600"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Admissions Quick Send</h3>
+                            <div class="muted">Select a student to generate & send an admission letter (simulated).
+                            </div>
+                            <div style="margin-top:10px">
+                                <select id="studentSelect" class="select"></select>
+                                <div style="margin-top:10px;display:flex;gap:8px">
+                                    <button id="btnSendAdmission" class="btn">Send Admission Letter</button>
+                                    <button id="btnMarkAdmitted" class="btn small secondary">Mark Admitted (no
+                                        file)</button>
+                                </div>
+                                <div id="admissionMsg" style="margin-top:10px;color:#2b3949;font-weight:600"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Quick Reports</h3>
+                            <div style="margin-top:6px" class="muted">Download lists or view summary</div>
+                            <div style="margin-top:10px;display:flex;gap:8px">
+                                <button id="btnExportTutors" class="btn small">Export Tutors (CSV)</button>
+                                <button id="btnExportStudents" class="btn small secondary">Export Students</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Recent Activity</h3>
+                            <div class="muted small">Most recent changes</div>
+                            <div class="activity-log" id="activityLog"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manage Tutors view -->
+            <section class="card" id="view-manage-tutors" style="display:none">
+                <div class="row-between">
+                    <h3>Manage Tutors</h3>
+                    <div class="muted">Add, edit or remove tutors — changes persist locally.</div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+                    <input id="searchTutor" class="input" placeholder="Search tutors by name or email" />
+                </div>
+
+                <div style="margin-top:12px;overflow:auto">
+                    <table id="tutors-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Students view -->
+            <section class="card" id="view-students" style="display:none">
+                <div class="row-between">
+                    <h3>All Students</h3>
+                    <div class="helpers">
+                        <input id="searchStudent" class="input small" placeholder="Search name or matric" />
+                        <select id="filterDeptStudents" class="select small">
+                            <option value="all">All Depts</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top:12px;overflow:auto">
+                    <table id="all-students-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Matric</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Admissions view -->
+            <section class="card" id="view-admissions" style="display:none">
+                <h3>Admissions</h3>
+                <div class="muted">Compose an admission letter and send to students (simulated download + mark
+                    admitted).</div>
+
+                <div style="margin-top:12px">
+                    <label class="muted">Select student</label>
+                    <select id="admitStudentSelect" class="select"></select>
+                    <div style="margin-top:10px">
+                        <label class="muted">Letter Title</label>
+                        <input id="letterTitle" class="input" value="Admission Offer from DCH Academy" />
+                        <label class="muted" style="margin-top:10px">Message</label>
+                        <textarea id="letterBody" class="textarea" rows="6">Dear [Name],
+
+Congratulations! We are pleased to offer you admission into the [Program] program at DCH Academy.
+
+Sincerely,
+DCH Admissions Team</textarea>
+                        <div style="margin-top:10px;display:flex;gap:8px">
+                            <button id="btnSendCompose" class="btn">Send Letter</button>
+                            <button id="btnPreviewLetter" class="btn small secondary">Preview</button>
+                        </div>
+                        <div id="composeMsg" style="margin-top:10px;font-weight:600;color:#2b3949"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports & settings (placeholders) -->
+            <section class="card" id="view-reports" style="display:none">
+                <h3>Reports</h3>
+                <div class="muted">Simple reports and exports.</div>
+                <div style="margin-top:12px">
+                    <button id="btnGenerateReport" class="btn">Generate Summary (Console)</button>
+                </div>
+            </section>
+
+            <section class="card" id="view-settings" style="display:none">
+                <h3>Settings</h3>
+                <div class="muted">Admin preferences and platform settings (placeholder).</div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        /*******************
+         * Data layer (localStorage persistence)
+         *******************/
+        const STORAGE_KEY = 'dch_admin_data_v1';
+
+        const defaultData = {
+            tutors: [
+                { id: 't1', name: 'Alice Johnson', email: 'alice@dch.ac', added: Date.now() },
+                { id: 't2', name: 'Samuel Peters', email: 'samuel@dch.ac', added: Date.now() - 86400000 },
+            ],
+            students: [
+                { id: 's1', name: 'Robert Ocran', matric: 'DCH/ACADB033', dept: 'Creative', admitted: false, createdAt: Date.now() - 2000000 },
+                { id: 's2', name: 'Peace Uche', matric: 'DCH/ACADB034', dept: 'Design', admitted: true, createdAt: Date.now() - 1500000 },
+                { id: 's3', name: 'Gift Musa', matric: 'DCH/ACADB035', dept: 'Creative', admitted: false, createdAt: Date.now() - 1000000 },
+                { id: 's4', name: 'Aisha Bello', matric: 'DCH/ACADB036', dept: 'Business', admitted: false, createdAt: Date.now() - 500000 },
+            ],
+            activities: [
+                { ts: Date.now() - 1000000, text: 'Seed data loaded' }
+            ],
+            trend: [] // store admission events timestamps (for trend chart)
+        };
+
+        function loadData() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+                return JSON.parse(JSON.stringify(defaultData));
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                // ensure schema parts
+                parsed.tutors = parsed.tutors || [];
+                parsed.students = parsed.students || [];
+                parsed.activities = parsed.activities || [];
+                parsed.trend = parsed.trend || [];
+                return parsed;
+            } catch (e) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+                return JSON.parse(JSON.stringify(defaultData));
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        }
+
+        let DB = loadData();
+
+        /*******************
+         * Utilities & DOM refs
+         *******************/
+        const byId = id => document.getElementById(id);
+        function uid(prefix = 'id') { return prefix + Math.random().toString(36).slice(2, 9); }
+        function nowReadable(ts = Date.now()) { return new Date(ts).toLocaleString(); }
+
+        // stats
+        const statTutors = byId('stat-tutors');
+        const statStudents = byId('stat-students');
+        const statAdmitted = byId('stat-admitted');
+
+        // lists & selects
+        const recentTutorsList = byId('recent-tutors-list');
+        const recentTutorCount = byId('recent-tutor-count');
+        const studentsTableBody = document.querySelector('#students-table tbody');
+        const deptFilter = byId('deptFilter');
+        const deptCountTag = byId('deptCount');
+
+        const tutorName = byId('tutorName');
+        const tutorEmail = byId('tutorEmail');
+        const btnAddTutor = byId('btnAddTutor');
+        const btnClearTutors = byId('btnClearTutors');
+        const tutorMsg = byId('tutorMsg');
+
+        const studentSelect = byId('studentSelect');
+        const btnSendAdmission = byId('btnSendAdmission');
+        const btnMarkAdmitted = byId('btnMarkAdmitted');
+        const admissionMsg = byId('admissionMsg');
+
+        const btnExportTutors = byId('btnExportTutors');
+        const btnExportStudents = byId('btnExportStudents');
+
+        const tutorsTableBody = document.querySelector('#tutors-table tbody');
+        const searchTutor = byId('searchTutor');
+
+        const allStudentsTableBody = document.querySelector('#all-students-table tbody');
+        const searchStudent = byId('searchStudent');
+        const filterDeptStudents = byId('filterDeptStudents');
+
+        const admitStudentSelect = byId('admitStudentSelect');
+        const btnSendCompose = byId('btnSendCompose');
+        const btnPreviewLetter = byId('btnPreviewLetter');
+        const letterTitle = byId('letterTitle');
+        const letterBody = byId('letterBody');
+        const composeMsg = byId('composeMsg');
+
+        const activityLog = byId('activityLog');
+
+        const views = {
+            dashboard: byId('view-dashboard'),
+            'manage-tutors': byId('view-manage-tutors'),
+            students: byId('view-students'),
+            admissions: byId('view-admissions'),
+            reports: byId('view-reports'),
+            settings: byId('view-settings')
+        };
+
+        // charts (will be instantiated later)
+        let deptChart = null;
+        let trendChart = null;
+
+        /*******************
+         * Rendering functions
+         *******************/
+        function refreshStats() {
+            statTutors.textContent = DB.tutors.length;
+            statStudents.textContent = DB.students.length;
+            statAdmitted.textContent = DB.students.filter(s => s.admitted).length;
+        }
+
+        function renderRecentTutors() {
+            recentTutorsList.innerHTML = '';
+            const items = DB.tutors.slice().reverse().slice(0, 6);
+            recentTutorCount.textContent = items.length;
+            items.forEach(t => {
+                const el = document.createElement('div');
+                el.style.padding = '8px 0';
+                el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+                          <div><strong>${escapeHtml(t.name)}</strong><div style="font-size:12px;color:var(--muted)">${escapeHtml(t.email)}</div></div>
+                          <div style="font-size:12px;color:var(--muted)">${new Date(t.added).toLocaleDateString()}</div>
+                        </div>`;
+                recentTutorsList.appendChild(el);
+            });
+        }
+
+        function renderDeptFilterOptions() {
+            const depts = Array.from(new Set(DB.students.map(s => s.dept))).sort();
+            deptFilter.innerHTML = '<option value="all">All Departments</option>';
+            filterDeptStudents.innerHTML = '<option value="all">All Depts</option>';
+            admitStudentSelect.innerHTML = '';
+            studentSelect.innerHTML = '';
+            depts.forEach(d => {
+                const opt = document.createElement('option'); opt.value = d; opt.textContent = d; deptFilter.appendChild(opt);
+                const opt2 = opt.cloneNode(true); filterDeptStudents.appendChild(opt2);
+            });
+
+            // populate selects for admissions / quick send
+            DB.students.forEach(s => {
+                const o = document.createElement('option'); o.value = s.id; o.textContent = `${s.name} — ${s.matric}`; admitStudentSelect.appendChild(o);
+                const o2 = o.cloneNode(true); studentSelect.appendChild(o2);
+            });
+
+            deptCountTag.textContent = DB.students.length;
+        }
+
+        function renderStudentsPreview(filterDept = 'all') {
+            const list = filterDept === 'all' ? DB.students : DB.students.filter(s => s.dept === filterDept);
+            studentsTableBody.innerHTML = '';
+            list.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.matric || '')}</td><td>${escapeHtml(s.dept || '')}</td><td>${s.admitted ? '<span class="tag">Admitted</span>' : '<span class="muted">Pending</span>'}</td>`;
+                studentsTableBody.appendChild(tr);
+            });
+            deptCountTag.textContent = list.length;
+        }
+
+        function renderTutorsTable(filter = '') {
+            const q = (filter || '').trim().toLowerCase();
+            tutorsTableBody.innerHTML = '';
+            DB.tutors.forEach(t => {
+                if (q && !(t.name.toLowerCase().includes(q) || t.email.toLowerCase().includes(q))) return;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(t.name)}</td><td>${escapeHtml(t.email)}</td>
+          <td>
+            <button class="btn small secondary" data-action="edit" data-id="${t.id}">Edit</button>
+            <button class="btn small danger" data-action="remove" data-id="${t.id}">Remove</button>
+          </td>`;
+                tutorsTableBody.appendChild(tr);
+            });
+        }
+
+        function renderAllStudentsTable(filterDept = 'all', q = '') {
+            const query = (q || '').trim().toLowerCase();
+            allStudentsTableBody.innerHTML = '';
+            DB.students.forEach(s => {
+                if (filterDept !== 'all' && s.dept !== filterDept) return;
+                if (query && !(s.name.toLowerCase().includes(query) || (s.matric || '').toLowerCase().includes(query))) return;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.matric || '')}</td><td>${escapeHtml(s.dept || '')}</td><td>${s.admitted ? '<span class="tag">Admitted</span>' : '<span class="muted">Pending</span>'}</td>
+          <td>
+            <button class="btn small" data-action="send" data-id="${s.id}">Send Letter</button>
+            <button class="btn small secondary" data-action="mark" data-id="${s.id}">${s.admitted ? 'Unmark' : 'Mark Admitted'}</button>
+          </td>`;
+                allStudentsTableBody.appendChild(tr);
+            });
+        }
+
+        function renderActivityLog() {
+            activityLog.innerHTML = '';
+            const items = DB.activities.slice().reverse().slice(0, 50);
+            items.forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'activity-item';
+                div.innerHTML = `<div style="font-weight:600">${escapeHtml(a.text)}</div><div style="color:var(--muted);font-size:12px">${nowReadable(a.ts)}</div>`;
+                activityLog.appendChild(div);
+            });
+        }
+
+        /*******************
+         * Charts
+         *******************/
+        function renderDeptChart() {
+            const ctx = document.getElementById('deptChart').getContext('2d');
+
+            // prepare data
+            const depts = {};
+            DB.students.forEach(s => {
+                const d = s.dept || 'Unassigned';
+                depts[d] = (depts[d] || 0) + 1;
+            });
+
+            const labels = Object.keys(depts);
+            const data = Object.values(depts);
+
+            // destroy existing
+            if (deptChart) deptChart.destroy();
+            deptChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Students per Department',
+                        data,
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        backgroundColor: labels.map((_, i) => i % 2 === 0 ? 'rgba(108,99,255,0.85)' : 'rgba(124,89,201,0.85)')
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        function renderTrendChart() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+
+            // trend: use DB.trend which stores timestamps when admissions were sent
+            // build last 7 events grouped by day label (or use last 7 days)
+            const now = Date.now();
+            // last 7 days labels
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(now - i * 24 * 60 * 60 * 1000);
+                days.push(d.toLocaleDateString());
+            }
+
+            const counts = days.map(dayLabel => {
+                return DB.trend.filter(ts => (new Date(ts)).toLocaleDateString() === dayLabel).length;
+            });
+
+            if (trendChart) trendChart.destroy();
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Admissions per day',
+                        data: counts,
+                        fill: true,
+                        tension: 0.3,
+                        borderColor: 'rgba(108,99,255,0.95)',
+                        backgroundColor: 'rgba(108,99,255,0.12)',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        /*******************
+         * Escape helper
+         *******************/
+        function escapeHtml(str) { return String(str || '').replace(/[&<>"']/g, function (m) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]); }); }
+
+        /*******************
+         * Activity helper
+         *******************/
+        function pushActivity(text) {
+            DB.activities = DB.activities || [];
+            DB.activities.push({ ts: Date.now(), text });
+            // keep size reasonable
+            if (DB.activities.length > 500) DB.activities.shift();
+            saveData();
+            renderActivityLog();
+        }
+
+        /*******************
+         * Actions
+         *******************/
+        function addTutor(name, email) {
+            if (!name || !email) { showTutorMsg('Name and email are required', true); return; }
+            if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showTutorMsg('Please enter a valid email', true); return; }
+            const exists = DB.tutors.some(t => t.email.toLowerCase() === email.toLowerCase());
+            if (exists) { showTutorMsg('A tutor with this email already exists', true); return; }
+            const t = { id: uid('t'), name: name.trim(), email: email.trim(), added: Date.now() };
+            DB.tutors.push(t);
+            saveData();
+            pushActivity(`Tutor added: ${t.name}`);
+            refreshAll();
+            tutorName.value = ''; tutorEmail.value = '';
+            showTutorMsg('Tutor added successfully', false);
+        }
+
+        function removeTutor(id) {
+            const t = DB.tutors.find(x => x.id === id);
+            if (!t) return;
+            DB.tutors = DB.tutors.filter(t => t.id !== id);
+            saveData();
+            pushActivity(`Tutor removed: ${t.name}`);
+            refreshAll();
+        }
+
+        function clearTutors() {
+            if (!confirm('Clear all tutors? This cannot be undone.')) return;
+            DB.tutors = [];
+            saveData();
+            pushActivity('All tutors cleared');
+            refreshAll();
+        }
+
+        function sendAdmissionLetterToStudent(studentId, title, body) {
+            const s = DB.students.find(x => x.id === studentId);
+            if (!s) { admissionMsg.textContent = 'Student not found'; return; }
+            // personalize body
+            const composed = body.replace(/\[Name\]/g, s.name).replace(/\[Program\]/g, s.dept);
+            // create a simple text/letter file for download
+            const fileContent = `${title}\n\n${composed}\n\nStudent: ${s.name}\nMatric: ${s.matric || ''}\nDepartment: ${s.dept || ''}\n\n-- DCH Academy`;
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${(s.matric || s.id)}_Admission_Letter.txt`;
+            document.body.appendChild(a); a.click(); a.remove();
+            URL.revokeObjectURL(url);
+
+            // mark admitted & record trend
+            s.admitted = true;
+            DB.trend = DB.trend || [];
+            DB.trend.push(Date.now());
+            saveData();
+            pushActivity(`Admission letter sent to ${s.name}`);
+            refreshAll();
+            admissionMsg.textContent = `Admission letter created & download started for ${s.name}`;
+            setTimeout(() => admissionMsg.textContent = '', 4500);
+        }
+
+        function markStudentAdmitted(studentId, value = true) {
+            const s = DB.students.find(x => x.id === studentId);
+            if (!s) return;
+            s.admitted = !!value;
+            if (value) {
+                DB.trend = DB.trend || [];
+                DB.trend.push(Date.now());
+                pushActivity(`Student admitted: ${s.name}`);
+            } else {
+                pushActivity(`Student unmarked as admitted: ${s.name}`);
+            }
+            saveData();
+            refreshAll();
+        }
+
+        /*******************
+         * Wire UI events
+         *******************/
+        btnAddTutor.addEventListener('click', () => addTutor(tutorName.value, tutorEmail.value));
+        btnClearTutors.addEventListener('click', clearTutors);
+
+        // quick admission
+        btnSendAdmission.addEventListener('click', () => {
+            const sid = studentSelect.value;
+            if (!sid) { admissionMsg.textContent = 'Select a student'; return; }
+            sendAdmissionLetterToStudent(sid, 'Admission Offer from DCH Academy', `Dear [Name],\n\nCongratulations! We are pleased to offer you admission into the ${DB.students.find(s => s.id === sid).dept || '[Program]'} program at DCH Academy.\n\nSincerely,\nAdmissions Team`);
+        });
+        btnMarkAdmitted.addEventListener('click', () => {
+            const sid = studentSelect.value;
+            if (!sid) { admissionMsg.textContent = 'Select a student'; return; }
+            markStudentAdmitted(sid, true);
+            admissionMsg.textContent = 'Student marked admitted';
+            setTimeout(() => admissionMsg.textContent = '', 2500);
+        });
+
+        // exports
+        btnExportTutors.addEventListener('click', () => {
+            const rows = DB.tutors.map(t => `${t.name},${t.email}`).join('\n');
+            const blob = new Blob([`Name,Email\n${rows}`], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dch_tutors.csv'; document.body.appendChild(a); a.click(); a.remove();
+        });
+        btnExportStudents.addEventListener('click', () => {
+            const rows = DB.students.map(s => `${s.name},${s.matric || ''},${s.dept || ''},${s.admitted}`).join('\n');
+            const blob = new Blob([`Name,Matric,Dept,Admitted\n${rows}`], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dch_students.csv'; document.body.appendChild(a); a.click(); a.remove();
+        });
+
+        // tutors table actions (delegate)
+        tutorsTableBody.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+            if (action === 'remove') {
+                if (confirm('Remove tutor?')) removeTutor(id);
+            } else if (action === 'edit') {
+                const t = DB.tutors.find(x => x.id === id);
+                if (!t) return;
+                const newName = prompt('Edit name', t.name);
+                const newEmail = prompt('Edit email', t.email);
+                if (newName && newEmail) { t.name = newName.trim(); t.email = newEmail.trim(); saveData(); pushActivity(`Tutor updated: ${t.name}`); refreshAll(); }
+            }
+        });
+
+        // all students table actions
+        allStudentsTableBody.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+            if (action === 'send') {
+                // open admissions composer preselect
+                admitStudentSelect.value = id;
+                views['admissions'].style.display = ''; // switch to admissions view
+                setActiveView('admissions');
+            } else if (action === 'mark') {
+                const s = DB.students.find(x => x.id === id);
+                if (!s) return;
+                s.admitted = !s.admitted;
+                saveData();
+                pushActivity(s.admitted ? `Student admitted: ${s.name}` : `Student admission removed: ${s.name}`);
+                refreshAll();
+            }
+        });
+
+        // search / filters
+        searchTutor.addEventListener('input', () => renderTutorsTable(searchTutor.value));
+        searchStudent.addEventListener('input', () => renderAllStudentsTable(filterDeptStudents.value, searchStudent.value));
+        filterDeptStudents.addEventListener('change', () => renderAllStudentsTable(filterDeptStudents.value, searchStudent.value));
+        deptFilter.addEventListener('change', () => renderStudentsPreview(deptFilter.value));
+
+        // admissions composer
+        btnSendCompose.addEventListener('click', () => {
+            const sid = admitStudentSelect.value;
+            if (!sid) { composeMsg.textContent = 'Select a student'; return; }
+            sendAdmissionLetterToStudent(sid, letterTitle.value, letterBody.value);
+            composeMsg.textContent = 'Admission letter sent (download started).';
+            setTimeout(() => composeMsg.textContent = '', 3500);
+        });
+        btnPreviewLetter.addEventListener('click', () => {
+            const sid = admitStudentSelect.value;
+            const name = sid ? DB.students.find(x => x.id === sid).name : '[Name]';
+            const preview = letterBody.value.replace(/\[Name\]/g, name).replace(/\[Program\]/g, sid ? DB.students.find(x => x.id === sid).dept : '[Program]');
+            alert(preview);
+        });
+
+        // simple sidebar view switcher
+        document.getElementById('sidebarMenu').addEventListener('click', (e) => {
+            const item = e.target.closest('.item');
+            if (!item) return;
+            const view = item.dataset.view;
+            setActiveView(view);
+        });
+
+        function setActiveView(viewKey) {
+            // reset active class
+            document.querySelectorAll('#sidebarMenu .item').forEach(it => it.classList.toggle('active', it.dataset.view === viewKey));
+            // show / hide views
+            Object.keys(views).forEach(k => views[k].style.display = (k === viewKey ? '' : 'none'));
+            // scroll to top of main
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // if dashboard open, refresh charts
+            if (viewKey === 'dashboard') {
+                renderDeptChart();
+                renderTrendChart();
+            }
+        }
+
+        // hamburger toggle for small screens
+        document.querySelector('.hamburger').addEventListener('click', () => {
+            const sb = document.querySelector('.sidebar');
+            if (sb.style.display === 'none') sb.style.display = '';
+            else sb.style.display = 'none';
+        });
+
+        /*******************
+         * Refresh all UI pieces
+         *******************/
+        function refreshAll() {
+            renderDeptFilterOptions();
+            renderRecentTutors();
+            renderStudentsPreview(deptFilter.value || 'all');
+            renderTutorsTable(searchTutor.value || '');
+            renderAllStudentsTable(filterDeptStudents.value || 'all', searchStudent.value || '');
+            refreshStats();
+            renderActivityLog();
+            renderDeptChart();
+            renderTrendChart();
+            populateStudentSelects();
+        }
+
+        function populateStudentSelects() {
+            // keep selects synced (admitStudentSelect and studentSelect already filled in renderDeptFilterOptions)
+            // ensure current selection doesn't break
+        }
+
+        function showTutorMsg(text, isError = false) {
+            tutorMsg.textContent = text;
+            tutorMsg.style.color = isError ? 'var(--danger)' : 'var(--success)';
+            setTimeout(() => tutorMsg.textContent = '', 3500);
+        }
+
+        // initial render
+        refreshAll();
+
+        // expose helper functions for console/testing
+        window.DCHAdmin = {
+            DB, refreshAll, addTutor, removeTutor, markStudentAdmitted, pushActivity
+        };
+
+        /*******************
+         * Notes:
+         * - All writes persist to localStorage via saveData()
+         * - Charts are rendered with Chart.js and update when data changes
+         *******************/
+    </script>
+</body>
+
+</html>

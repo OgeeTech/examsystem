@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DCHA STUDENT DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="Student menu">
+            <h2>DCH Student</h2>
+            <nav class="menu" id="sidebarMenu">
+                <div class="item active" data-view="dashboard">🏠 Dashboard</div>
+                <div class="item" data-view="exams">📝 My Exams</div>
+                <div class="item" data-view="grades">📊 Grades</div>
+                <div class="item" data-view="submissions">📨 Submissions</div>
+                <div class="item" data-view="resources">📚 Resources</div>
+                <div class="item" data-view="profile">👤 Profile</div>
+            </nav>
+            <div class="footer-note">&copy; DCH Academy • Student Portal</div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main" role="main">
+            <div class="topbar">
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="hamburger" title="Toggle menu">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.6">
+                            <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 style="font-size:16px;margin:0;color:#2b3949">Student Dashboard</h3>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="status-pill"><span class="status-dot" aria-hidden></span>
+                        <div style="font-size:13px;font-weight:600;color:#2b3949">ACTIVE</div>
+                    </div>
+                    <div class="user-info" style="font-weight:600"></div>
+                    <div class="user-role" style="font-size:13px;color:var(--muted)"></div>
+                    <button class="logout-btn btn small secondary">Logout</button>
+                </div>
+            </div>
+
+            <section class="hero" aria-labelledby="heroTitle">
+                <h1 id="heroTitle">Welcome back, <span class="user-name">Student</span>!</h1>
+                <p>Access your exams, track your progress, and view your grades all in one place.</p>
+            </section>
+
+            <!-- Dashboard view -->
+            <section class="card" id="view-dashboard">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Overall Score</h3>
+                        <div class="stat-big" id="stat-overall-score">0%</div>
+                        <div class="muted">Your current average</div>
+                    </div>
+                    <div class="card">
+                        <h3>Exams Taken</h3>
+                        <div class="stat-big" id="stat-exams-taken">0</div>
+                        <div class="muted">Total exams completed</div>
+                    </div>
+                    <div class="card">
+                        <h3>Pending Exams</h3>
+                        <div class="stat-big" id="stat-pending-exams">0</div>
+                        <div class="muted">Exams to complete</div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="left-col">
+                        <!-- Upcoming Exams -->
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Upcoming Exams</h3>
+                                <div class="muted small" id="upcoming-exams-count">0</div>
+                            </div>
+                            <div class="list" id="upcoming-exams-list" style="margin-top:12px">
+                                <!-- Upcoming exams will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Performance Chart -->
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Performance Trend</h3>
+                                <div class="muted small">Last 6 exams</div>
+                            </div>
+                            <div style="margin-top:12px">
+                                <canvas id="performanceChart" height="160"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Recent Results -->
+                        <div class="card">
+                            <div class="row-between">
+                                <h3>Recent Results</h3>
+                                <div class="muted small" id="recent-results-count">0</div>
+                            </div>
+                            <div class="list" id="recent-results-list" style="margin-top:12px">
+                                <!-- Recent results will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-col">
+                        <!-- Quick Actions -->
+                        <div class="card">
+                            <h3>Quick Actions</h3>
+                            <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+                                <button id="quickViewExams" class="btn">View All Exams</button>
+                                <button id="quickViewGrades" class="btn secondary">Check Grades</button>
+                                <button id="quickDownloadResults" class="btn secondary">Download Results</button>
+                            </div>
+                        </div>
+
+                        <!-- Start Exam Card -->
+                        <div class="card">
+                            <h3>Ready to Take an Exam?</h3>
+                            <div class="muted">Select an exam to begin</div>
+                            <div style="margin-top:10px">
+                                <select id="availableExams" class="select">
+                                    <option value="">Select an exam...</option>
+                                </select>
+                                <div style="margin-top:10px;display:flex;gap:8px">
+                                    <button id="btnStartExam" class="btn">Start Exam</button>
+                                    <button id="btnViewDetails" class="btn small secondary">Details</button>
+                                </div>
+                                <div id="examStartMsg" style="margin-top:10px;color:#2b3949;font-weight:600"></div>
+                            </div>
+                        </div>
+
+                        <!-- Notifications -->
+                        <div class="card">
+                            <h3>Notifications</h3>
+                            <div class="muted small">Important updates and reminders</div>
+                            <div class="activity-log" id="notificationsList" style="margin-top:10px">
+                                <!-- Notifications will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Academic Summary -->
+                        <div class="card">
+                            <h3>Academic Summary</h3>
+                            <div class="muted small" id="studentDepartment">Loading...</div>
+                            <div style="margin-top:10px">
+                                <div class="stat-item">
+                                    <span class="stat-label">Department Rank:</span>
+                                    <span class="stat-value" id="departmentRank">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Attendance:</span>
+                                    <span class="stat-value" id="attendanceScore">0%</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Assignments:</span>
+                                    <span class="stat-value" id="assignmentsCompleted">0/0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exams view -->
+            <section class="card" id="view-exams" style="display:none">
+                <div class="row-between">
+                    <h3>Available Exams</h3>
+                    <div class="muted">Exams assigned to you</div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+                    <input id="searchExam" class="input" placeholder="Search exams..." />
+                    <select id="filterExamStatus" class="select">
+                        <option value="all">All Exams</option>
+                        <option value="available">Available</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <button id="refreshExams" class="btn small">Refresh</button>
+                </div>
+
+                <div class="exams-grid" id="examsGrid" style="margin-top:20px">
+                    <!-- Exam cards will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Grades view -->
+            <section class="card" id="view-grades" style="display:none">
+                <div class="row-between">
+                    <h3>My Grades</h3>
+                    <button id="exportGrades" class="btn small">Export Grades</button>
+                </div>
+
+                <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+                    <select id="filterGradePeriod" class="select">
+                        <option value="all">All Time</option>
+                        <option value="month">This Month</option>
+                        <option value="semester">This Semester</option>
+                    </select>
+                    <select id="filterGradeType" class="select">
+                        <option value="all">All Types</option>
+                        <option value="exam">Exams</option>
+                        <option value="assignment">Assignments</option>
+                        <option value="project">Projects</option>
+                    </select>
+                </div>
+
+                <div style="margin-top:12px;overflow:auto">
+                    <table id="grades-table">
+                        <thead>
+                            <tr>
+                                <th>Exam/Assignment</th>
+                                <th>Type</th>
+                                <th>Score</th>
+                                <th>Percentage</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <!-- Grade Summary -->
+                <div class="grid" style="margin-top:20px">
+                    <div class="card">
+                        <h4>Average Score</h4>
+                        <div class="stat-big" id="grade-average">0%</div>
+                        <div class="muted">Overall performance</div>
+                    </div>
+                    <div class="card">
+                        <h4>Highest Score</h4>
+                        <div class="stat-big" id="grade-highest">0%</div>
+                        <div class="muted">Best performance</div>
+                    </div>
+                    <div class="card">
+                        <h4>Improvement</h4>
+                        <div class="stat-big" id="grade-improvement">+0%</div>
+                        <div class="muted">Since last period</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Submissions view -->
+            <section class="card" id="view-submissions" style="display:none">
+                <div class="row-between">
+                    <h3>My Submissions</h3>
+                    <div class="muted">Project and assignment submissions</div>
+                </div>
+
+                <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+                    <input id="searchSubmission" class="input" placeholder="Search submissions..." />
+                    <select id="filterSubmissionType" class="select">
+                        <option value="all">All Types</option>
+                        <option value="project">Projects</option>
+                        <option value="assignment">Assignments</option>
+                        <option value="exam">Exams</option>
+                    </select>
+                    <button id="refreshSubmissions" class="btn small">Refresh</button>
+                </div>
+
+                <div class="submissions-grid" id="submissionsGrid" style="margin-top:20px">
+                    <!-- Submission cards will be loaded here -->
+                </div>
+
+                <!-- File Upload Section -->
+                <div class="card" style="margin-top:20px;background:#f9f7f1;border:1px solid #e6d9b4">
+                    <h4>Submit Project/Assignment</h4>
+                    <div class="muted">Upload your project files</div>
+                    <div style="margin-top:12px">
+                        <div class="form-row">
+                            <div class="field">
+                                <label class="muted">Select Exam/Project</label>
+                                <select id="submissionExam" class="select">
+                                    <option value="">Select exam...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-top:10px">
+                            <div class="field">
+                                <label class="muted">Description</label>
+                                <textarea id="submissionDescription" class="textarea"
+                                    placeholder="Describe your submission..." rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-top:10px">
+                            <div class="field">
+                                <label class="muted">Upload Files</label>
+                                <input type="file" id="projectFiles" class="input" multiple
+                                    accept=".pdf,.doc,.docx,.zip,.txt,.py,.js,.html,.css">
+                                <div class="muted" style="font-size:12px;margin-top:4px">
+                                    Max 10MB per file, up to 5 files
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px;display:flex;gap:8px">
+                            <button id="btnUploadSubmission" class="btn">Upload Submission</button>
+                            <button id="btnClearFiles" class="btn small secondary">Clear</button>
+                        </div>
+                        <div id="uploadStatus" style="margin-top:10px"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resources view -->
+            <section class="card" id="view-resources" style="display:none">
+                <h3>Learning Resources</h3>
+                <div class="muted">Study materials and resources for your courses</div>
+
+                <div class="grid" style="margin-top:20px">
+                    <div class="card">
+                        <h4>📚 Course Materials</h4>
+                        <div class="muted">Lecture notes and presentations</div>
+                        <div style="margin-top:10px">
+                            <button class="btn small">View Materials</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>📖 Study Guides</h4>
+                        <div class="muted">Exam preparation resources</div>
+                        <div style="margin-top:10px">
+                            <button class="btn small">Access Guides</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>🎥 Video Lectures</h4>
+                        <div class="muted">Recorded class sessions</div>
+                        <div style="margin-top:10px">
+                            <button class="btn small">Watch Videos</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card" style="margin-top:20px">
+                    <h4>Quick Links</h4>
+                    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                        <a href="#" class="btn small secondary">Course Syllabus</a>
+                        <a href="#" class="btn small secondary">Academic Calendar</a>
+                        <a href="#" class="btn small secondary">Library Resources</a>
+                        <a href="#" class="btn small secondary">Tutor Contact</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile view -->
+            <section class="card" id="view-profile" style="display:none">
+                <h3>My Profile</h3>
+                <div class="muted">Manage your personal information and preferences</div>
+
+                <div class="content" style="margin-top:20px">
+                    <div class="left-col">
+                        <div class="card">
+                            <h4>Personal Information</h4>
+                            <div style="margin-top:12px">
+                                <div class="form-row">
+                                    <div class="field">
+                                        <label class="muted">Full Name</label>
+                                        <input id="profileName" class="input" readonly>
+                                    </div>
+                                    <div class="field">
+                                        <label class="muted">Email</label>
+                                        <input id="profileEmail" class="input" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Student ID</label>
+                                        <input id="profileStudentId" class="input" readonly>
+                                    </div>
+                                    <div class="field">
+                                        <label class="muted">Department</label>
+                                        <input id="profileDepartment" class="input" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Assigned Tutor</label>
+                                        <input id="profileTutor" class="input" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h4>Academic Progress</h4>
+                            <div style="margin-top:12px">
+                                <div class="stat-item">
+                                    <span class="stat-label">Current GPA:</span>
+                                    <span class="stat-value" id="profileGPA">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Credits Completed:</span>
+                                    <span class="stat-value" id="profileCredits">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Attendance Rate:</span>
+                                    <span class="stat-value" id="profileAttendance">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-col">
+                        <div class="card">
+                            <h4>Account Settings</h4>
+                            <div style="margin-top:12px">
+                                <div class="form-row">
+                                    <div class="field">
+                                        <label class="muted">Change Password</label>
+                                        <input type="password" id="newPassword" class="input"
+                                            placeholder="New password">
+                                    </div>
+                                </div>
+                                <div class="form-row" style="margin-top:10px">
+                                    <div class="field">
+                                        <label class="muted">Confirm Password</label>
+                                        <input type="password" id="confirmPassword" class="input"
+                                            placeholder="Confirm new password">
+                                    </div>
+                                </div>
+                                <button class="btn small" style="margin-top:12px">Update Password</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h4>Notification Preferences</h4>
+                            <div style="margin-top:10px">
+                                <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                                    <input type="checkbox" id="notifyGrades" checked>
+                                    <span>Grade notifications</span>
+                                </label>
+                                <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                                    <input type="checkbox" id="notifyExams" checked>
+                                    <span>Exam reminders</span>
+                                </label>
+                                <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                                    <input type="checkbox" id="notifyAnnouncements" checked>
+                                    <span>Announcements</span>
+                                </label>
+                                <label style="display:flex;align-items:center;gap:8px">
+                                    <input type="checkbox" id="notifyDeadlines">
+                                    <span>Assignment deadlines</span>
+                                </label>
+                            </div>
+                            <button class="btn small" style="margin-top:12px">Save Preferences</button>
+                        </div>
+
+                        <div class="card">
+                            <h4>Support</h4>
+                            <div class="muted">Need help with the platform?</div>
+                            <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+                                <button class="btn small secondary">Contact Tutor</button>
+                                <button class="btn small secondary">Technical Support</button>
+                                <button class="btn small secondary">Report Issue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Exam Modal -->
+    <div id="examModal" class="modal" style="display:none">
+        <div class="modal-content" style="max-width:800px">
+            <div class="modal-header">
+                <h3 id="examModalTitle">Exam</h3>
+                <div class="exam-timer" id="examTimer">60:00</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="examContent">
+                    <!-- Exam questions will be loaded here -->
+                </div>
+                <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
+                    <button id="btnSubmitExam" class="btn">Submit Exam</button>
+                    <button id="btnCancelExam" class="btn small secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="resultsModal" class="modal" style="display:none">
+        <div class="modal-content" style="max-width:600px">
+            <div class="modal-header">
+                <h3>Exam Results</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="resultsContent">
+                    <!-- Results will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include JavaScript files -->
+    <script src="./js/auth.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/student.js"></script>
+</body>
+
+</html>
