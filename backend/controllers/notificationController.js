@@ -1,7 +1,7 @@
-const transporter = require('../config/mailer');
+// const transporter = require('../config/mailer');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
-const EmailTemplates = require('../utils/emailTemplates');
+// const EmailTemplates = require('../utils/emailTemplates');
 const PDFGenerator = require('../utils/pdf');
 
 class NotificationController {
