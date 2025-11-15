@@ -1,7 +1,8 @@
 
 
 class AuthService {
-    static BASE_URL = 'http://localhost:5000/api';
+    static BASE_URL = 'https://examsystem-ujhm.onrender.com/api';
+
 
     static getToken() {
         return localStorage.getItem('token');

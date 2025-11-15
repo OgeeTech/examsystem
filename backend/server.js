@@ -14,8 +14,10 @@ const studentRoutes = require('./routes/studentRoutes');
 const app = express();
 
 // ESSENTIAL MIDDLEWARE ONLY
+
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: 'https://e-dch.netlify.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
