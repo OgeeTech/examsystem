@@ -25,13 +25,28 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        // Department handling based on role
+        let finalDepartment;
+        if (role === 'admin') {
+            finalDepartment = 'Administration'; // Set a default for admin
+        } else if (role === 'tutor' || role === 'student') {
+            if (!department) {
+                return res.status(400).json({
+                    message: 'Department is required for tutors and students'
+                });
+            }
+            finalDepartment = department;
+        } else {
+            return res.status(400).json({ message: 'Invalid role' });
+        }
+
         // Create new user
         const user = new User({
             name,
             email,
             passwordHash: password,
             role: role || 'student',
-            department: role === 'admin' ? undefined : department
+            department: finalDepartment // Always provide a department
         });
 
         await user.save();
@@ -50,10 +65,13 @@ exports.signup = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error during signup', error: error.message });
+        console.error('Signup error:', error);
+        res.status(500).json({
+            message: 'Server error during signup',
+            error: error.message
+        });
     }
 };
-
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
