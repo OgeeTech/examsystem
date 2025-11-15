@@ -26,17 +26,21 @@ exports.signup = async (req, res) => {
         }
 
         // Department handling based on role
-        let finalDepartment;
+        let finalDepartment = undefined;
+
         if (role === 'admin') {
-            finalDepartment = 'Administration'; // Set a default for admin
-        } else if (role === 'tutor' || role === 'student') {
+            // Admins MUST NOT have a department
+            finalDepartment = undefined;
+        }
+        else if (role === 'tutor' || role === 'student') {
             if (!department) {
                 return res.status(400).json({
                     message: 'Department is required for tutors and students'
                 });
             }
             finalDepartment = department;
-        } else {
+        }
+        else {
             return res.status(400).json({ message: 'Invalid role' });
         }
 
@@ -46,7 +50,7 @@ exports.signup = async (req, res) => {
             email,
             passwordHash: password,
             role: role || 'student',
-            department: finalDepartment // Always provide a department
+            ...(finalDepartment && { department: finalDepartment }) // add only if exists
         });
 
         await user.save();
@@ -61,7 +65,7 @@ exports.signup = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                department: user.department
+                department: user.department || null
             }
         });
     } catch (error) {
@@ -72,6 +76,7 @@ exports.signup = async (req, res) => {
         });
     }
 };
+
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;

@@ -1,9 +1,8 @@
-const DEPARTMENTS = [
+module.exports = [
     'Frontend',
     'Backend',
     'Fullstack',
     'Cybersecurity',
-    'Dispatch'
+    'Dispatch',
+    // 'Administration' // only if you need this
 ];
-
-module.exports = DEPARTMENTS;
