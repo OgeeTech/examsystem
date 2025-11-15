@@ -8,40 +8,46 @@ class TutorDashboard {
         this.currentQuestions = [];
         // Don't call init() here - wait for DOMContentLoaded
     }
-
     async init() {
         // Show loading state immediately
         this.showLoadingState();
 
-        // Check authentication first
-        const isAuthenticated = await AuthService.checkAuthAndRedirect();
-        if (!isAuthenticated) {
-            return;
+        try {
+            // Check authentication first
+            const isAuthenticated = await AuthService.checkAuthAndRedirect();
+            if (!isAuthenticated) {
+                this.hideLoadingState(); // Hide loading if not authenticated
+                return;
+            }
+
+            const user = AuthService.getUser();
+            if (user.role !== 'tutor') {
+                this.hideLoadingState(); // Hide loading before redirect
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Set user info
+            document.querySelector('.user-name').textContent = user.name;
+            document.querySelector('.user-info').textContent = user.name;
+            document.querySelector('.user-role').textContent = user.role;
+            document.getElementById('examDepartment').value = user.department;
+            document.getElementById('departmentName').textContent = user.department;
+            document.getElementById('tutorProfileName').value = user.name;
+            document.getElementById('tutorProfileEmail').value = user.email;
+            document.getElementById('tutorProfileDept').value = user.department;
+
+            await this.loadDashboardData();
+            this.setupEventListeners();
+
+        } catch (error) {
+            console.error('Error initializing tutor dashboard:', error);
+            this.showError('Failed to initialize dashboard: ' + error.message);
+        } finally {
+            // Ensure loading is always hidden, even if init fails
+            this.hideLoadingState();
         }
-
-        const user = AuthService.getUser();
-        if (user.role !== 'tutor') {
-            window.location.href = 'index.html';
-            return;
-        }
-
-        // Hide loading and show content
-        this.hideLoadingState();
-
-        // Set user info
-        document.querySelector('.user-name').textContent = user.name;
-        document.querySelector('.user-info').textContent = user.name;
-        document.querySelector('.user-role').textContent = user.role;
-        document.getElementById('examDepartment').value = user.department;
-        document.getElementById('departmentName').textContent = user.department;
-        document.getElementById('tutorProfileName').value = user.name;
-        document.getElementById('tutorProfileEmail').value = user.email;
-        document.getElementById('tutorProfileDept').value = user.department;
-
-        await this.loadDashboardData();
-        this.setupEventListeners();
     }
-
     showLoadingState() {
         // Hide main content, show loading
         const mainContent = document.querySelector('.main');
@@ -114,8 +120,8 @@ class TutorDashboard {
             console.log('Loaded exams:', exams);
             console.log('Loaded students:', students);
 
-            this.exams = exams;
-            this.students = students;
+            this.exams = exams || [];
+            this.students = students || [];
 
             this.updateDashboardStats();
             this.renderRecentExams();
@@ -133,9 +139,18 @@ class TutorDashboard {
         } catch (error) {
             console.error('Error loading dashboard data:', error);
             this.showError('Failed to load dashboard data: ' + error.message);
+
+            // CRITICAL FIX: Set empty arrays to prevent infinite loading
+            this.exams = [];
+            this.students = [];
+            this.updateDashboardStats();
+            this.renderRecentExams();
+            this.renderRecentSubmissions();
+        } finally {
+            // CRITICAL FIX: Ensure loading state is always hidden
+            this.hideLoadingState();
         }
     }
-
     updateDashboardStats() {
         const activeExams = this.exams.filter(exam => exam.isActive).length;
         const pendingSubmissions = this.exams.reduce((total, exam) => total + (exam.submissionCount || 0), 0);
