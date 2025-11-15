@@ -19,18 +19,12 @@ class TutorDashboard {
             return;
         }
 
-        // Logic on your login/index page
-        if (AuthService.getUser()) {
-            // If a user is found, redirect them immediately to their correct dashboard
-            const user = AuthService.getUser();
-            if (user.role === 'tutor') {
-                window.location.href = 'tutor-dashboard.html';
-            } else if (user.role === 'student') {
-                window.location.href = 'student-dashboard.html';
-            }
-            // Prevent the rest of the login page from loading
+        const user = AuthService.getUser();
+        if (user.role !== 'tutor') {
+            window.location.href = 'index.html';
             return;
         }
+
         // Hide loading and show content
         this.hideLoadingState();
 
@@ -105,7 +99,7 @@ class TutorDashboard {
         try {
             console.log('Loading dashboard data...');
 
-            // Only load exams and students, skip notifications for now
+            // These API calls might be failing and triggering re-authentication
             const [exams, students] = await Promise.all([
                 ApiService.getTutorExams().catch(error => {
                     console.warn('Failed to load exams:', error);
