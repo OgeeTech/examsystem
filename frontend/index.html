@@ -412,13 +412,20 @@
         signupForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            const role = document.getElementById('signupRole').value;
+
             const formData = {
                 name: document.getElementById('signupName').value,
                 email: document.getElementById('signupEmail').value,
                 password: document.getElementById('signupPassword').value,
-                role: document.getElementById('signupRole').value,
-                department: document.getElementById('signupDepartment').value
+                role
             };
+
+            // Only add department if necessary
+            if (role === "student" || role === "tutor") {
+                formData.department = document.getElementById('signupDepartment').value;
+            }
+
 
             const messageDiv = document.getElementById('signupMessage');
 
@@ -500,9 +507,8 @@
             }
         });
 
-        // Clear any existing auth data on index page
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+
+
     </script>
 </body>
 

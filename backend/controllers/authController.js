@@ -25,35 +25,43 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Department handling based on role
+        // Validate role
+        if (!['admin', 'tutor', 'student'].includes(role)) {
+            return res.status(400).json({ message: 'Invalid role' });
+        }
+
+        // Department validation
         let finalDepartment = undefined;
 
         if (role === 'admin') {
-            // Admins MUST NOT have a department
             finalDepartment = undefined;
-        }
-        else if (role === 'tutor' || role === 'student') {
-            if (!department) {
+        } else {
+            if (!department || department.trim() === "") {
                 return res.status(400).json({
                     message: 'Department is required for tutors and students'
                 });
             }
+
             finalDepartment = department;
-        }
-        else {
-            return res.status(400).json({ message: 'Invalid role' });
         }
 
         // Create new user
-        const user = new User({
+        // Prepare user data safely
+        const userData = {
             name,
             email,
             passwordHash: password,
-            role: role || 'student',
-            ...(finalDepartment && { department: finalDepartment }) // add only if exists
-        });
+            role
+        };
 
+        // Add department ONLY for tutor/student
+        if (role !== 'admin') {
+            userData.department = department;
+        }
+
+        const user = new User(userData);
         await user.save();
+
 
         // Generate token WITH ROLE AND DEPARTMENT
         const token = generateToken(user);
@@ -68,6 +76,7 @@ exports.signup = async (req, res) => {
                 department: user.department || null
             }
         });
+
     } catch (error) {
         console.error('Signup error:', error);
         res.status(500).json({
